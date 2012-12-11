@@ -3,13 +3,13 @@ def load_current_resource
   if(new_resource.comment && !new_resource.comment.start_with?('#'))
     new_resource.comment "# #{new_resource.comment}"
   end
-  node[:hosts_file][:maps] ||= {}
+  node.set[:hosts_file][:maps] ||= {}
 end
 
 action :create do
   ruby_block "hosts_file create[#{new_resource.name}]" do
     block do
-      node[:hosts_file][:maps][new_resource.ip_address] = %w(hostname aliases comment).map{|item|
+      node.set[:hosts_file][:maps][new_resource.ip_address] = %w(hostname aliases comment).map{|item|
         Array(new_resource.send(item))
       }.inject(&:+).join(' ')
       new_resource.updated_by_last_action(true)
