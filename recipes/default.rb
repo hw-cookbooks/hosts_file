@@ -2,10 +2,12 @@ case node[:hosts_file][:define_self]
 when 'ip_address'
   hosts_file_entry '127.0.0.1' do
     hostname 'localhost'
+    aliases node[:hosts_file][:localhost_aliases]
   end
   hosts_file_entry node.ipaddress do
     hostname node.fqdn
     aliases node.hostname
+    aliases node[:hosts_file][:localhost_aliases]
   end
 when 'localhost_only'
   hosts_file_entry '127.0.0.1' do
