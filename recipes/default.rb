@@ -3,9 +3,9 @@ when 'ip_address'
   hosts_file_entry '127.0.0.1' do
     hostname 'localhost'
   end
-  hosts_file_entry node.ipaddress do
-    hostname node.fqdn
-    aliases node.hostname
+  hosts_file_entry node[:ipaddress] do
+    hostname node[:fqdn]
+    aliases node[:hostname]
   end
 when 'localhost_only'
   hosts_file_entry '127.0.0.1' do
@@ -14,7 +14,7 @@ when 'localhost_only'
 else
   hosts_file_entry '127.0.0.1' do
     hostname 'localhost'
-    aliases [node.fqdn, node.hostname]
+    aliases [node[:fqdn], node[:hostname]]
   end
 end
 
