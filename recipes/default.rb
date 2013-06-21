@@ -1,20 +1,23 @@
-case node[:hosts_file][:define_self]
-when 'ip_address'
-  hosts_file_entry '127.0.0.1' do
-    hostname 'localhost'
-  end
-  hosts_file_entry node[:ipaddress] do
-    hostname node[:fqdn]
-    aliases node[:hostname]
-  end
-when 'localhost_only'
-  hosts_file_entry '127.0.0.1' do
-    hostname 'localhost'
-  end
-else
-  hosts_file_entry '127.0.0.1' do
-    hostname 'localhost'
-    aliases [node[:fqdn], node[:hostname]]
+# Default again just in case things have changed
+
+node.default[:hosts_file][:fqdn] = node[:fqdn]
+node.default[:hosts_file][:hostname] = node[:hostname]
+
+# Always manage ourself
+hosts_file_entry '127.0.0.1' do
+  hostname node[:hosts_file][:fqdn]
+  aliases [node[:hosts_file][:hostname], 'localhost']
+end
+
+node[:network][:interfaces].each do |name, info|
+  next unless info[:type] == 'eth'
+  info[:addresses].each do |address, a_info|
+    if(a_info[:family] == 'inet')
+      hosts_file_entry address do
+        hostname node[:hosts_file][:fqdn]
+        aliases [node[:hosts_file][:hostname]]
+      end
+    end
   end
 end
 
@@ -29,5 +32,27 @@ ruby_block "hosts_file_notifier" do
   block do
     true
   end
-  notifies :create, resources(:template => "managed_hosts_file"), :delayed
+  notifies :create, 'template[managed_hosts_file]', :delayed
+end
+
+# Add IPv6 bits
+hosts_file_entry '::1' do
+  hostname 'ip6-localhost'
+  aliases %w(ip6-loopback)
+end
+
+hosts_file_entry 'fe00::0' do
+  hostname 'ip6-localnet'
+end
+
+hosts_file_entry 'ff00::0' do
+  hostname 'ip6-mcastprefix'
+end
+
+hosts_file_entry 'ff02::1' do
+  hostname 'ip6-allnodes'
+end
+
+hosts_file_entry 'ff002::2' do
+  hostname 'ip6-allrouters'
 end
