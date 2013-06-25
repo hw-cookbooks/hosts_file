@@ -14,7 +14,7 @@ node[:network][:interfaces].each do |name, info|
   info[:addresses].each do |address, a_info|
     if(a_info[:family] == 'inet')
       hosts_file_entry address do
-        hostname node[:hosts_file][:fqdn]
+        hostname node[:hosts_file][:address_name].to_s == 'hostname' ? node[:hosts_file][:hostname] : node[:hosts_file][:fqdn]
         aliases [node[:hosts_file][:hostname]]
       end
     end
