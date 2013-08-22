@@ -26,6 +26,9 @@ template "managed_hosts_file" do
   path node[:hosts_file][:path]
   mode 0644
   action :nothing
+  only_if do
+    node.run_state[:hosts_file] && !node.run_state[:hosts_file][:maps].empty?
+  end
 end
 
 ruby_block "hosts_file_notifier" do
