@@ -5,8 +5,17 @@ node.default[:hosts_file][:hostname] = node[:hostname]
 
 # Always manage ourself
 hosts_file_entry '127.0.0.1' do
-  hostname node[:hosts_file][:fqdn]
-  aliases [node[:hosts_file][:hostname], 'localhost']
+  hostname node[:hosts_file][:hostname]
+  aliases [node[:hosts_file][:fqdn], 'localhost'].compact
+end
+
+public_ip_hostname = case node[:hosts_file][:public_ips].to_s
+when 'hostname'
+  node[:hosts_file][:hostname]
+when 'fqdn'
+  node[:hosts_file][:fqdn]
+else
+  'localhost'
 end
 
 node[:network][:interfaces].each do |name, info|
@@ -14,8 +23,7 @@ node[:network][:interfaces].each do |name, info|
   info[:addresses].each do |address, a_info|
     if(a_info[:family] == 'inet')
       hosts_file_entry address do
-        hostname node[:hosts_file][:address_name].to_s == 'hostname' ? node[:hosts_file][:hostname] : node[:hosts_file][:fqdn]
-        aliases [node[:hosts_file][:hostname]]
+        hostname public_ip_hostname
       end
     end
   end
