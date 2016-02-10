@@ -64,6 +64,6 @@ hosts_file_entry 'ff02::1' do
   hostname 'ip6-allnodes'
 end
 
-hosts_file_entry 'ff002::2' do
+hosts_file_entry 'ff02::2' do
   hostname 'ip6-allrouters'
 end
