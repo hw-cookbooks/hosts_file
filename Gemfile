@@ -3,6 +3,7 @@
 source 'https://rubygems.org'
 
 gem 'emeril', :group => :release
+gem 'rake'
 
 group :test do
   gem 'test-kitchen'
