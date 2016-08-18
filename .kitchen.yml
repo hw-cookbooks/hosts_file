@@ -1,6 +1,7 @@
 ---
 driver:
   name: vagrant
+  vm_hostname: default-hostname.example.com
 
 provisioner:
   name: chef_zero
