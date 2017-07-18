@@ -1,13 +1,22 @@
 # Managed Hosts File
 
 Manage your hosts file with chef.
+## Requirements
 
-### Base configurables:
+### Chef
 
-* `default[:hosts_file][:path] = '/etc/hosts'`
-* `default[:hosts_file][:define_self] = 'ip_address' # or 'loopback' or 'localhost_only'`
+- Chef 12.1+
 
-### Via Attributes
+### Cookbooks
+
+- none
+
+## Base configurables:
+
+- `default[:hosts_file][:path] = '/etc/hosts'`
+- `default[:hosts_file][:define_self] = 'ip_address' # or 'loopback' or 'localhost_only'`
+
+## Via Attributes
 
 ```ruby
 override_attributes(
@@ -20,7 +29,7 @@ override_attributes(
 )
 ```
 
-### Via LWRP
+## Via Resource
 
 ```ruby
 hosts_file_entry '192.168.0.100' do
@@ -36,6 +45,6 @@ and ensure you add the default recipe to the run list:
 run_list(["recipe[hosts_file]"])
 ```
 
-### Repo:
+## Repo:
 
-* https://github.com/hw-cookbooks/hosts_file
+- <https://github.com/hw-cookbooks/hosts_file>
