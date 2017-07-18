@@ -7,6 +7,6 @@ node[:hosts_file][:custom_entries].each do |ip, hosts|
   hosts_file_entry ip do
     hostname hn
     aliases als unless als.empty?
-    comment "Provided via hosts_file custom entry"
+    comment 'Provided via hosts_file custom entry'
   end
 end

@@ -19,19 +19,18 @@ if node[:hosts_file][:public_ips]
                          'localhost'
                        end
 
-  node[:network][:interfaces].each do |name, info|
+  node[:network][:interfaces].each do |_name, info|
     next unless info[:type] == 'eth'
     info[:addresses].each do |address, a_info|
-      if(a_info[:family] == 'inet')
-        hosts_file_entry address do
-          hostname public_ip_hostname
-        end
+      next unless a_info[:family] == 'inet'
+      hosts_file_entry address do
+        hostname public_ip_hostname
       end
     end
   end
 end
 
-template "managed_hosts_file" do
+template 'managed_hosts_file' do
   source 'hosts.erb'
   path node[:hosts_file][:path]
   mode 0644
@@ -41,7 +40,7 @@ template "managed_hosts_file" do
   end
 end
 
-ruby_block "hosts_file_notifier" do
+ruby_block 'hosts_file_notifier' do
   block do
     true
   end
