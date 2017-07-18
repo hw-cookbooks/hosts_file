@@ -7,3 +7,6 @@ source_url        "https://github.com/hw-cookbooks/hosts_file" if respond_to?(:s
 issues_url        "https://github.com/hw-cookbooks/hosts_file/issues" if respond_to?(:issues_url)
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version '0.2.2'
+%w(ubuntu debian redhat centos scientific oracle amazon).each do |os|
+  supports os
+end
