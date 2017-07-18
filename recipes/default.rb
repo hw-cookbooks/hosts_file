@@ -9,21 +9,23 @@ hosts_file_entry '127.0.0.1' do
   aliases [node[:hosts_file][:hostname], 'localhost'].compact
 end
 
-public_ip_hostname = case node[:hosts_file][:public_ips].to_s
-when 'hostname'
-  node[:hosts_file][:hostname]
-when 'fqdn'
-  node[:hosts_file][:fqdn]
-else
-  'localhost'
-end
+if node[:hosts_file][:public_ips]
+  public_ip_hostname = case node[:hosts_file][:public_ips].to_s
+                       when 'hostname'
+                         node[:hosts_file][:hostname]
+                       when 'fqdn'
+                         node[:hosts_file][:fqdn]
+                       else
+                         'localhost'
+                       end
 
-node[:network][:interfaces].each do |name, info|
-  next unless info[:type] == 'eth'
-  info[:addresses].each do |address, a_info|
-    if(a_info[:family] == 'inet')
-      hosts_file_entry address do
-        hostname public_ip_hostname
+  node[:network][:interfaces].each do |name, info|
+    next unless info[:type] == 'eth'
+    info[:addresses].each do |address, a_info|
+      if(a_info[:family] == 'inet')
+        hosts_file_entry address do
+          hostname public_ip_hostname
+        end
       end
     end
   end
