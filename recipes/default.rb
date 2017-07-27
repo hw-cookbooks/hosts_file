@@ -21,6 +21,8 @@ if node[:hosts_file][:public_ips]
 
   node[:network][:interfaces].each do |name, info|
     next unless info[:type] == 'eth'
+    next if info[:addresses].nil?
+    
     info[:addresses].each do |address, a_info|
       if(a_info[:family] == 'inet')
         hosts_file_entry address do
