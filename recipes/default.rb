@@ -1,47 +1,46 @@
 # Default again just in case things have changed
 
-node.default[:hosts_file][:fqdn] = node[:fqdn]
-node.default[:hosts_file][:hostname] = node[:hostname]
+node.default['hosts_file'][:fqdn] = node['fqdn']
+node.default['hosts_file'][:hostname] = node['hostname']
 
 # Always manage ourself
 hosts_file_entry '127.0.0.1' do
-  hostname node[:hosts_file][:fqdn]
-  aliases [node[:hosts_file][:hostname], 'localhost'].compact
+  hostname node['hosts_file']['fqdn']
+  aliases [node['hosts_file']['hostname'], 'localhost'].compact
 end
 
-if node[:hosts_file][:public_ips]
-  public_ip_hostname = case node[:hosts_file][:public_ips].to_s
+if node['hosts_file']['public_ips']
+  public_ip_hostname = case node['hosts_file']['public_ips'].to_s
                        when 'hostname'
-                         node[:hosts_file][:hostname]
+                         node['hosts_file']['hostname']
                        when 'fqdn'
-                         node[:hosts_file][:fqdn]
+                         node['hosts_file']['fqdn']
                        else
                          'localhost'
                        end
 
-  node[:network][:interfaces].each do |name, info|
+  node['network']['interfaces'].each do |_name, info|
     next unless info[:type] == 'eth'
     info[:addresses].each do |address, a_info|
-      if(a_info[:family] == 'inet')
-        hosts_file_entry address do
-          hostname public_ip_hostname
-        end
+      next unless a_info[:family] == 'inet'
+      hosts_file_entry address do
+        hostname public_ip_hostname
       end
     end
   end
 end
 
-template "managed_hosts_file" do
+template 'managed_hosts_file' do
   source 'hosts.erb'
-  path node[:hosts_file][:path]
-  mode 0644
+  path node['hosts_file']['path']
+  mode '644'
   action :nothing
   only_if do
     node.run_state[:hosts_file] && !node.run_state[:hosts_file][:maps].empty?
   end
 end
 
-ruby_block "hosts_file_notifier" do
+ruby_block 'hosts_file_notifier' do
   block do
     true
   end
